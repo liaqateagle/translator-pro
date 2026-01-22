@@ -39,6 +39,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            xvfb \
             libxcb-cursor0 \
             libxkbcommon-x11-0 \
             libegl1-mesa \
@@ -62,7 +63,12 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build executable
+      - name: Build executable (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum pyinstaller ${{ matrix.pyinstaller_args }} main.py
+
+      - name: Build executable (Windows/macOS)
+        if: runner.os != 'Linux'
         run: pyinstaller ${{ matrix.pyinstaller_args }} main.py
 
       - name: Upload artifact
