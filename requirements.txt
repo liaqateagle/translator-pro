@@ -1,0 +1,17 @@
+# Translator Pro - Dependencies
+# Python 3.9+ required
+
+# GUI Framework
+PyQt6>=6.5.0
+
+# Translation Engines
+googletrans==4.0.0-rc1
+deep-translator>=1.11.4
+deepl>=1.17.0
+
+# PDF Support
+PyPDF2>=3.0.0
+
+# Optional: Better PDF text extraction
+# pdfplumber>=0.9.0
+
