@@ -16,11 +16,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            artifact_name: TranslatorPro-Windows.exe
-            pyinstaller_args: --onefile --windowed --icon=icon.ico --name=TranslatorPro
+            artifact_name: TranslatorPro-Windows
+            exe_name: TranslatorPro.exe
           - os: macos-latest
             artifact_name: TranslatorPro-macOS
-            pyinstaller_args: --onefile --windowed --name=TranslatorPro
+            exe_name: TranslatorPro
 
     runs-on: ${{ matrix.os }}
     
@@ -40,14 +40,29 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build executable
-        run: pyinstaller ${{ matrix.pyinstaller_args }} main.py
+      - name: Build executable (Windows)
+        if: runner.os == 'Windows'
+        run: pyinstaller --onefile --windowed --icon=icon.ico --name=TranslatorPro main.py
+
+      - name: Build executable (macOS)
+        if: runner.os == 'macOS'
+        run: pyinstaller --onefile --windowed --name=TranslatorPro main.py
+
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mv dist/TranslatorPro.exe dist/TranslatorPro-Windows.exe
+
+      - name: Rename artifact (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mv dist/TranslatorPro dist/TranslatorPro-macOS
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: dist/
+          path: dist/${{ matrix.artifact_name }}*
 
   release:
     needs: build
@@ -59,12 +74,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -la artifacts/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: artifacts/**/*
+          files: |
+            artifacts/TranslatorPro-Windows.exe
+            artifacts/TranslatorPro-macOS
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
