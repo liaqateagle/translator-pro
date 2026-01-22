@@ -23,7 +23,7 @@ A modern, professional text and document translation application built with Pyth
 
 ## 📸 Screenshot
 
-![Translator Pro Interface](https://via.placeholder.com/800x500?text=Translator+Pro+Screenshot)
+![Translator Pro Interface](screenshoot.png)
 
 ## 🚀 Quick Start
 
